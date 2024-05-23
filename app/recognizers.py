@@ -1,4 +1,5 @@
 import io
+import os
 import whisper
 from pydub import AudioSegment
 from aiogram.types import Message
@@ -17,7 +18,11 @@ async def audio_to_text(path: str) -> str:
 async def save_as_mp3(message: Message) -> str:
     voice_file_info = await bot.get_file(message.voice.file_id)
     voice_ogg = io.BytesIO()
+
     await bot.download_file(voice_file_info.file_path, voice_ogg)
+
+    if not os.path.exists("voice_files"):
+        os.mkdir("voice_files")
 
     voice_mp3_path = f"voice_files/voice-{message.voice.file_id}.mp3"
     AudioSegment.from_file(voice_ogg, "ogg").export(
